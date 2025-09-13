@@ -39,8 +39,11 @@ import "@ionic/react/css/palettes/dark.system.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import Tabs from "./pages/Tabs";
 
 setupIonicReact();
+
+const dumbString = 'Será disponibilizado em breve!';
 
 const App: React.FC = () => {
   return (
@@ -56,6 +59,22 @@ const App: React.FC = () => {
 
             <Route path="/dashboard" exact={true}>
               <Dashboard teste="PARAMETRO DO DASH" />
+            </Route>
+
+            <Route path="/tabs" exact={true}>
+              <Tabs title="Comandas" dumbString={dumbString} />
+            </Route>
+
+            <Route path="/products" exact={true}>
+              <Tabs title="Produtos" dumbString={dumbString} />
+            </Route>
+
+            <Route path="/reports" exact={true}>
+              <Tabs title="Relatórios" dumbString={dumbString} />
+            </Route>
+
+            <Route path="/settings" exact={true}>
+              <Tabs title="Configurações" dumbString={dumbString} />
             </Route>
 
             {/* Deixando este exemplo abaixo para ver como é utilizado o hook do router */}
