@@ -1,7 +1,7 @@
 name: comanda
 
 services:  
-  node:
+  app:
     image: node:24.6.0-alpine3.22
     working_dir: /home/node/app
     user: "node"
