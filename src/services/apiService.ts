@@ -56,6 +56,7 @@ class ApiService {
       }
 
       const data = await response.json();
+
       return data;
     } catch (error) {
       if (error instanceof TypeError && error.message.includes("fetch")) {
