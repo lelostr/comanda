@@ -67,16 +67,17 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonContent>
-        <IonCard>
-          <div
-            style={{
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+        <div
+          style={{
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <IonCard>
             <IonCardContent>
               <div style={{ textAlign: "center", marginBottom: "30px" }}>
                 <IonIcon icon={lockClosedOutline} style={{ fontSize: "48px", color: "var(--ion-color-primary)" }} />
@@ -122,29 +123,9 @@ const Login: React.FC = () => {
                   "Entrar"
                 )}
               </IonButton>
-
-              <div
-                style={{
-                  textAlign: "center",
-                  marginTop: "20px",
-                  padding: "10px",
-                  backgroundColor: "#f4f5f8",
-                  borderRadius: "8px",
-                }}
-              >
-                <IonText color="medium">
-                  <small>
-                    <strong>Credenciais de teste:</strong>
-                    <br />
-                    Email: admin@comanda.com
-                    <br />
-                    Senha: 123456
-                  </small>
-                </IonText>
-              </div>
             </IonCardContent>
-          </div>
-        </IonCard>
+          </IonCard>
+        </div>
 
         <IonAlert isOpen={showAlert} onDidDismiss={() => setShowAlert(false)} header="Erro" message={alertMessage} buttons={["OK"]} />
       </IonContent>

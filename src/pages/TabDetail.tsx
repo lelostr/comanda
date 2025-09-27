@@ -291,6 +291,32 @@ const TabDetail: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
+        {!tab.is_closed && (
+          <IonFab vertical="bottom" horizontal="end" slot="fixed">
+            <IonFabButton onClick={() => setShowProductsModal(true)}>
+              <IonIcon icon={add} />
+            </IonFabButton>
+          </IonFab>
+        )}
+
+        {!tab.is_closed && (
+          <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
+            {tab.remaining_amount > 0 && (
+              <IonButton expand="block" color="primary" onClick={() => setShowPaymentForm(true)}>
+                <IonIcon icon={card} slot="start" />
+                Adicionar Pagamento
+              </IonButton>
+            )}
+
+            {tab.total_items > 0 && (
+              <IonButton expand="block" color="success" onClick={() => setShowCloseAlert(true)}>
+                <IonIcon icon={checkmarkCircle} slot="start" />
+                Encerrar Comanda
+              </IonButton>
+            )}
+          </div>
+        )}
+
         {tab.products && tab.products.length > 0 ? (
           <IonGrid>
             <IonRow>
@@ -334,7 +360,7 @@ const TabDetail: React.FC = () => {
           </div>
         )}
 
-        {tab.payments && tab.payments.length > 0 && (
+        {tab.payments && tab.payments.length > 0 ? (
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>Pagamentos</IonCardTitle>
@@ -367,31 +393,11 @@ const TabDetail: React.FC = () => {
               ))}
             </IonCardContent>
           </IonCard>
-        )}
-
-        {!tab.is_closed && (
-          <IonFab vertical="bottom" horizontal="end" slot="fixed">
-            <IonFabButton onClick={() => setShowProductsModal(true)}>
-              <IonIcon icon={add} />
-            </IonFabButton>
-          </IonFab>
-        )}
-
-        {!tab.is_closed && (
-          <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
-            {tab.remaining_amount > 0 && (
-              <IonButton expand="block" color="primary" onClick={() => setShowPaymentForm(true)}>
-                <IonIcon icon={card} slot="start" />
-                Adicionar Pagamento
-              </IonButton>
-            )}
-
-            {tab.total_items > 0 && (
-              <IonButton expand="block" color="success" onClick={() => setShowCloseAlert(true)}>
-                <IonIcon icon={checkmarkCircle} slot="start" />
-                Encerrar Comanda
-              </IonButton>
-            )}
+        ) : (
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            <IonText color="medium">
+              <p>Nenhum pagamento adicionado</p>
+            </IonText>
           </div>
         )}
 

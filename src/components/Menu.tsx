@@ -81,25 +81,25 @@ const appMenus: AppMenu[] = [
         iosIcon: fastFoodOutline,
         mdIcon: fastFoodSharp,
       },
-      {
-        title: "Relatórios",
-        url: "/reports",
-        iosIcon: printOutline,
-        mdIcon: printSharp,
-      },
+      // {
+      //   title: "Relatórios",
+      //   url: "/reports",
+      //   iosIcon: printOutline,
+      //   mdIcon: printSharp,
+      // },
     ],
   },
-  {
-    title: "Outros",
-    pages: [
-      {
-        title: "Configurações",
-        url: "/settings",
-        iosIcon: settingsOutline,
-        mdIcon: settingsSharp,
-      },
-    ],
-  },
+  // {
+  //   title: "Outros",
+  //   pages: [
+  //     {
+  //       title: "Configurações",
+  //       url: "/settings",
+  //       iosIcon: settingsOutline,
+  //       mdIcon: settingsSharp,
+  //     },
+  //   ],
+  // },
 ];
 
 const appPages: AppPage[] = [

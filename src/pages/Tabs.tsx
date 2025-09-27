@@ -24,6 +24,8 @@ import {
   IonText,
   IonChip,
   IonBadge,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { add, eye, trash, checkmarkCircle } from "ionicons/icons";
 import { Tab } from "../types/tab";
@@ -124,6 +126,10 @@ const TabsPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
+
           <IonTitle>Comandas</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -156,10 +162,6 @@ const TabsPage: React.FC = () => {
             <IonText color="medium">
               <p>Nenhuma comanda encontrada</p>
             </IonText>
-            <IonButton onClick={handleCreateTab}>
-              <IonIcon icon={add} slot="start" />
-              Criar Primeira Comanda
-            </IonButton>
           </div>
         ) : (
           <IonGrid>

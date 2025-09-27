@@ -23,6 +23,8 @@ import {
   IonCol,
   IonText,
   IonChip,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { add, create, trash } from "ionicons/icons";
 import { Product } from "../types/product";
@@ -116,6 +118,10 @@ const Products: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
+
           <IonTitle>Produtos</IonTitle>
         </IonToolbar>
       </IonHeader>
