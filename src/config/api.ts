@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     ADD_PRODUCT: "/tabs/:id/add-product",
     REMOVE_PRODUCT: "/tabs/:id/remove-product",
     CLOSE: "/tabs/:id/close",
+    ADD_PAYMENT: "/tabs/:id/add-payment",
   },
 };
 

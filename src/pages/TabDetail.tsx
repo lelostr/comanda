@@ -35,12 +35,13 @@ import {
   IonItemOptions,
   IonItemOption,
 } from "@ionic/react";
-import { add, remove, checkmarkCircle, trash } from "ionicons/icons";
+import { add, remove, checkmarkCircle, trash, card } from "ionicons/icons";
 import { useParams, useHistory } from "react-router-dom";
-import { Tab, TabProduct } from "../types/tab";
+import { Tab, TabProduct, TabPayment, PaymentFormData } from "../types/tab";
 import { Product } from "../types/product";
 import { tabService } from "../services/tabService";
 import { productService } from "../services/productService";
+import PaymentForm from "../components/PaymentForm";
 
 const TabDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,6 +51,7 @@ const TabDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showProductsModal, setShowProductsModal] = useState(false);
   const [showCloseAlert, setShowCloseAlert] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [error, setError] = useState<string>("");
 
   const loadTab = async () => {
@@ -130,6 +132,23 @@ const TabDetail: React.FC = () => {
     }
   };
 
+  const handleAddPayment = async (paymentData: PaymentFormData) => {
+    if (!tab) return;
+
+    try {
+      await tabService.addPaymentToTab(tab.id, {
+        payer_name: paymentData.payer_name || undefined,
+        payment_value: parseFloat(paymentData.payment_value),
+        payment_method: paymentData.payment_method,
+      });
+      await loadTab();
+      setShowPaymentForm(false);
+    } catch (err) {
+      console.error("Erro ao adicionar pagamento:", err);
+      setError("Erro ao adicionar pagamento");
+    }
+  };
+
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -146,6 +165,10 @@ const TabDetail: React.FC = () => {
       minute: "2-digit",
     });
   };
+
+  if (showPaymentForm && tab) {
+    return <PaymentForm remainingAmount={tab.remaining_amount} onClose={() => setShowPaymentForm(false)} onSubmit={handleAddPayment} />;
+  }
 
   if (loading) {
     return (
@@ -218,9 +241,7 @@ const TabDetail: React.FC = () => {
             <IonCardTitle>{tab.client_name}</IonCardTitle>
             <IonCardSubtitle>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <IonChip color={tab.is_closed ? "success" : "primary"}>
-                  {tab.is_closed ? "Encerrada" : "Aberta"}
-                </IonChip>
+                <IonChip color={tab.is_closed ? "success" : "primary"}>{tab.is_closed ? "Encerrada" : "Aberta"}</IonChip>
                 {tab.is_closed && tab.closed_at && (
                   <IonText color="medium" style={{ fontSize: "0.8rem" }}>
                     Encerrada em: {formatDate(tab.closed_at)}
@@ -239,7 +260,31 @@ const TabDetail: React.FC = () => {
                 {tab.total_items} {tab.total_items === 1 ? "item" : "itens"}
               </IonBadge>
             </div>
-            
+
+            <div style={{ marginBottom: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                <IonText color="success" style={{ fontSize: "1.1rem" }}>
+                  <strong>Pago: {formatPrice(tab.total_paid)}</strong>
+                </IonText>
+                <IonText color={tab.remaining_amount > 0 ? "warning" : "success"} style={{ fontSize: "1.1rem" }}>
+                  <strong>Restante: {formatPrice(tab.remaining_amount)}</strong>
+                </IonText>
+              </div>
+
+              {tab.total_items > 0 && tab.is_fully_paid && (
+                <IonChip color="success" style={{ marginTop: "8px" }}>
+                  <IonIcon icon={checkmarkCircle} />
+                  <IonLabel>Comanda Paga</IonLabel>
+                </IonChip>
+              )}
+
+              {tab.is_overpaid && (
+                <IonChip color="warning" style={{ marginTop: "8px" }}>
+                  <IonLabel>Valor Excedido</IonLabel>
+                </IonChip>
+              )}
+            </div>
+
             <IonText color="medium" style={{ fontSize: "0.9rem" }}>
               Criada em: {formatDate(tab.created_at)}
             </IonText>
@@ -268,14 +313,9 @@ const TabDetail: React.FC = () => {
                             </IonText>
                           </div>
                         </div>
-                        
+
                         {!tab.is_closed && (
-                          <IonButton
-                            fill="outline"
-                            color="danger"
-                            size="small"
-                            onClick={() => handleRemoveProduct(product.id)}
-                          >
+                          <IonButton fill="outline" color="danger" size="small" onClick={() => handleRemoveProduct(product.id)}>
                             <IonIcon icon={remove} />
                           </IonButton>
                         )}
@@ -294,6 +334,41 @@ const TabDetail: React.FC = () => {
           </div>
         )}
 
+        {tab.payments && tab.payments.length > 0 && (
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>Pagamentos</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              {tab.payments.map((payment) => (
+                <div
+                  key={payment.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "8px 0",
+                    borderBottom: "1px solid var(--ion-color-light)",
+                  }}
+                >
+                  <div>
+                    <IonText color="primary">
+                      <strong>{formatPrice(payment.payment_value)}</strong>
+                    </IonText>
+                    <div style={{ fontSize: "0.9rem", color: "var(--ion-color-medium)" }}>
+                      {payment.payment_method}
+                      {payment.payer_name && ` • ${payment.payer_name}`}
+                    </div>
+                  </div>
+                  <IonText color="medium" style={{ fontSize: "0.8rem" }}>
+                    {formatDate(payment.created_at)}
+                  </IonText>
+                </div>
+              ))}
+            </IonCardContent>
+          </IonCard>
+        )}
+
         {!tab.is_closed && (
           <IonFab vertical="bottom" horizontal="end" slot="fixed">
             <IonFabButton onClick={() => setShowProductsModal(true)}>
@@ -302,16 +377,21 @@ const TabDetail: React.FC = () => {
           </IonFab>
         )}
 
-        {!tab.is_closed && tab.total_items > 0 && (
-          <div style={{ padding: "16px" }}>
-            <IonButton
-              expand="block"
-              color="success"
-              onClick={() => setShowCloseAlert(true)}
-            >
-              <IonIcon icon={checkmarkCircle} slot="start" />
-              Encerrar Comanda
-            </IonButton>
+        {!tab.is_closed && (
+          <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
+            {tab.remaining_amount > 0 && (
+              <IonButton expand="block" color="primary" onClick={() => setShowPaymentForm(true)}>
+                <IonIcon icon={card} slot="start" />
+                Adicionar Pagamento
+              </IonButton>
+            )}
+
+            {tab.total_items > 0 && (
+              <IonButton expand="block" color="success" onClick={() => setShowCloseAlert(true)}>
+                <IonIcon icon={checkmarkCircle} slot="start" />
+                Encerrar Comanda
+              </IonButton>
+            )}
           </div>
         )}
 
@@ -330,7 +410,9 @@ const TabDetail: React.FC = () => {
                 <IonItem key={product.id} button onClick={() => handleAddProduct(product)}>
                   <IonLabel>
                     <h3>{product.name}</h3>
-                    <p>{product.category} - {formatPrice(product.price)}</p>
+                    <p>
+                      {product.category} - {formatPrice(product.price)}
+                    </p>
                   </IonLabel>
                 </IonItem>
               ))}

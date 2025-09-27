@@ -171,9 +171,7 @@ const TabsPage: React.FC = () => {
                       <IonCardTitle>{tab.client_name}</IonCardTitle>
                       <IonCardSubtitle>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <IonChip color={tab.is_closed ? "success" : "primary"}>
-                            {tab.is_closed ? "Encerrada" : "Aberta"}
-                          </IonChip>
+                          <IonChip color={tab.is_closed ? "success" : "primary"}>{tab.is_closed ? "Encerrada" : "Aberta"}</IonChip>
                           {tab.is_closed && tab.closed_at && (
                             <IonText color="medium" style={{ fontSize: "0.8rem" }}>
                               {formatDate(tab.closed_at)}
@@ -192,29 +190,31 @@ const TabsPage: React.FC = () => {
                           {tab.total_items} {tab.total_items === 1 ? "item" : "itens"}
                         </IonBadge>
                       </div>
-                      
+
+                      <div style={{ marginBottom: "8px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <IonText color="success" style={{ fontSize: "0.9rem" }}>
+                            <strong>Pago: {formatPrice(tab.total_paid)}</strong>
+                          </IonText>
+                          <IonText color={tab.remaining_amount > 0 ? "warning" : "success"} style={{ fontSize: "0.9rem" }}>
+                            <strong>Restante: {formatPrice(tab.remaining_amount)}</strong>
+                          </IonText>
+                        </div>
+                      </div>
+
                       <IonText color="medium" style={{ fontSize: "0.9rem" }}>
                         Criada em: {formatDate(tab.created_at)}
                       </IonText>
                     </IonCardContent>
 
                     <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        onClick={() => handleViewTab(tab)}
-                      >
+                      <IonButton fill="outline" size="small" onClick={() => handleViewTab(tab)}>
                         <IonIcon icon={eye} slot="start" />
                         Ver
                       </IonButton>
-                      
+
                       {!tab.is_closed && (
-                        <IonButton
-                          fill="outline"
-                          color="danger"
-                          size="small"
-                          onClick={() => handleDeleteTab(tab)}
-                        >
+                        <IonButton fill="outline" color="danger" size="small" onClick={() => handleDeleteTab(tab)}>
                           <IonIcon icon={trash} slot="start" />
                           Excluir
                         </IonButton>
