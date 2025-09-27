@@ -40,12 +40,18 @@ const Login: React.FC = () => {
       return;
     }
 
-    const success = await login(email, password);
+    try {
+      const success = await login(email, password);
 
-    if (success) {
-      history.push("/");
-    } else {
-      setAlertMessage("Email ou senha incorretos");
+      if (success) {
+        history.push("/");
+      } else {
+        setAlertMessage("Email ou senha incorretos");
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error("Erro no login:", error);
+      setAlertMessage("Erro de conexão. Verifique sua internet e tente novamente.");
       setShowAlert(true);
     }
   };

@@ -1,10 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-}
+import { authService, User } from "../services/authService";
 
 interface AuthContextType {
   user: User | null;
@@ -27,36 +22,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    // Verificar se há um usuário salvo no localStorage
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+    const initializeAuth = async () => {
       try {
-        setUser(JSON.parse(savedUser));
+        // Verificar se há um usuário salvo
+        const savedUser = authService.getStoredUser();
+
+        if (savedUser && authService.isTokenValid()) {
+          setUser(savedUser);
+        } else {
+          // Tentar renovar token ou buscar usuário atual
+          const currentUser = await authService.getCurrentUser();
+          if (currentUser) {
+            setUser(currentUser);
+          } else {
+            // Limpar dados inválidos
+            await authService.logout();
+          }
+        }
       } catch (error) {
-        console.error("Erro ao carregar usuário salvo:", error);
-        localStorage.removeItem("user");
+        console.error("Erro ao inicializar autenticação:", error);
+        // Limpar dados em caso de erro
+        await authService.logout();
+      } finally {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
 
-      // Simulação de API call - substitua pela sua lógica real
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const loginData = await authService.login({ email, password });
 
-      // Validação simples para demonstração
-      if (email === "admin@comanda.com" && password === "123456") {
-        const userData: User = {
-          id: "1",
-          email: email,
-          name: "Administrador",
-        };
-
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
+      if (loginData.user) {
+        setUser(loginData.user);
         return true;
       }
 
@@ -69,9 +71,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    } finally {
+      setUser(null);
+    }
   };
 
   const value: AuthContextType = {
