@@ -10,6 +10,15 @@ import {
   IonMenu,
   IonMenuToggle,
   IonNote,
+  IonButton,
+  IonFooter,
+  IonToolbar,
+  IonHeader,
+  IonTitle,
+  IonItemSliding,
+  IonAvatar,
+  IonItemOptions,
+  IonItemOption,
 } from "@ionic/react";
 import { useLocation } from "react-router-dom";
 import {
@@ -23,7 +32,9 @@ import {
   printSharp,
   settingsOutline,
   settingsSharp,
+  logOutOutline,
 } from "ionicons/icons";
+import { useAuth } from "../contexts/AuthContext";
 import "./Menu.css";
 
 interface AppPage {
@@ -103,14 +114,25 @@ const appPages: AppPage[] = [
 
 const Menu: React.FC = () => {
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <IonMenu contentId="main" type="reveal">
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Comanda</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
         <IonList id="inbox-list" lines="none">
-          <IonListHeader>Comanda</IonListHeader>
-          <IonNote>user@mail.com</IonNote>
-
           {appMenus.map((appMenu, index) => {
             return (
               <IonItemGroup key={index}>
@@ -122,20 +144,13 @@ const Menu: React.FC = () => {
                   return (
                     <IonMenuToggle key={index} autoHide={false}>
                       <IonItem
-                        className={
-                          location.pathname === appPage.url ? "selected" : ""
-                        }
+                        className={location.pathname === appPage.url ? "selected" : ""}
                         routerLink={appPage.url}
                         routerDirection="none"
                         lines="none"
                         detail={false}
                       >
-                        <IonIcon
-                          aria-hidden="true"
-                          slot="start"
-                          ios={appPage.iosIcon}
-                          md={appPage.mdIcon}
-                        />
+                        <IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
 
                         <IonLabel>{appPage.title}</IonLabel>
                       </IonItem>
@@ -147,6 +162,24 @@ const Menu: React.FC = () => {
           })}
         </IonList>
       </IonContent>
+
+      <IonFooter>
+        <IonToolbar>
+          <IonItemSliding>
+            <IonItem button={true}>
+              <IonAvatar aria-hidden="true" slot="start">
+                <img alt="" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+              </IonAvatar>
+              <IonLabel>{user?.email || "user@mail.com"}</IonLabel>
+            </IonItem>
+            <IonItemOptions slot="end">
+              <IonItemOption color="danger" expandable={true} onClick={handleLogout}>
+                <IonIcon slot="icon-only" icon={logOutOutline}></IonIcon>
+              </IonItemOption>
+            </IonItemOptions>
+          </IonItemSliding>
+        </IonToolbar>
+      </IonFooter>
     </IonMenu>
   );
 };

@@ -1,14 +1,12 @@
-import {
-  IonApp,
-  IonRouterOutlet,
-  IonSplitPane,
-  setupIonicReact,
-} from "@ionic/react";
+import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Redirect, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Menu from "./components/Menu";
 import Page from "./pages/Page";
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -43,48 +41,79 @@ import Tabs from "./pages/Tabs";
 
 setupIonicReact();
 
-const dumbString = 'Será disponibilizado em breve!';
+const dumbString = "Será disponibilizado em breve!";
 
 const App: React.FC = () => {
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
+    <AuthProvider>
+      <IonApp>
+        <IonReactRouter>
+          <IonSplitPane contentId="main">
+            <Menu />
+            <IonRouterOutlet id="main">
+              {/* Rota pública - Login */}
+              <Route path="/login" exact={true}>
+                <Login />
+              </Route>
 
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/dashboard" />
-            </Route>
+              {/* Rotas protegidas */}
+              <Route path="/" exact={true}>
+                <ProtectedRoute>
+                  <Redirect to="/dashboard" />
+                </ProtectedRoute>
+              </Route>
 
-            <Route path="/dashboard" exact={true}>
-              <Dashboard teste="PARAMETRO DO DASH" />
-            </Route>
+              <Route path="/dashboard" exact={true}>
+                <ProtectedRoute>
+                  <IonRouterOutlet id="main">
+                    <Dashboard teste="PARAMETRO DO DASH" />
+                  </IonRouterOutlet>
+                </ProtectedRoute>
+              </Route>
 
-            <Route path="/tabs" exact={true}>
-              <Tabs title="Comandas" dumbString={dumbString} />
-            </Route>
+              <Route path="/tabs" exact={true}>
+                <ProtectedRoute>
+                  <IonRouterOutlet id="main">
+                    <Tabs title="Comandas" dumbString={dumbString} />
+                  </IonRouterOutlet>
+                </ProtectedRoute>
+              </Route>
 
-            <Route path="/products" exact={true}>
-              <Tabs title="Produtos" dumbString={dumbString} />
-            </Route>
+              <Route path="/products" exact={true}>
+                <ProtectedRoute>
+                  <IonRouterOutlet id="main">
+                    <Tabs title="Produtos" dumbString={dumbString} />
+                  </IonRouterOutlet>
+                </ProtectedRoute>
+              </Route>
 
-            <Route path="/reports" exact={true}>
-              <Tabs title="Relatórios" dumbString={dumbString} />
-            </Route>
+              <Route path="/reports" exact={true}>
+                <ProtectedRoute>
+                  <IonRouterOutlet id="main">
+                    <Tabs title="Relatórios" dumbString={dumbString} />
+                  </IonRouterOutlet>
+                </ProtectedRoute>
+              </Route>
 
-            <Route path="/settings" exact={true}>
-              <Tabs title="Configurações" dumbString={dumbString} />
-            </Route>
+              <Route path="/settings" exact={true}>
+                <ProtectedRoute>
+                  <IonRouterOutlet id="main">
+                    <Tabs title="Configurações" dumbString={dumbString} />
+                  </IonRouterOutlet>
+                </ProtectedRoute>
+              </Route>
 
-            {/* Deixando este exemplo abaixo para ver como é utilizado o hook do router */}
-            {/* <Route path="/folder/:name" exact={true}>
-              <Page />
+              {/* Deixando este exemplo abaixo para ver como é utilizado o hook do router */}
+              {/* <Route path="/folder/:name" exact={true}>
+              <ProtectedRoute>
+                <Page />
+              </ProtectedRoute>
             </Route> */}
-          </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
+            </IonRouterOutlet>
+          </IonSplitPane>
+        </IonReactRouter>
+      </IonApp>
+    </AuthProvider>
   );
 };
 
