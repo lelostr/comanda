@@ -12,13 +12,13 @@ export const API_ENDPOINTS = {
     LOGOUT: "/auth/logout",
     ME: "/me",
   },
-  // Adicione outros endpoints conforme necessário
-  // PRODUCTS: {
-  //   LIST: '/products',
-  //   CREATE: '/products',
-  //   UPDATE: '/products/:id',
-  //   DELETE: '/products/:id',
-  // },
+  PRODUCTS: {
+    LIST: "/products",
+    CREATE: "/products",
+    UPDATE: "/products/:id",
+    DELETE: "/products/:id",
+    SHOW: "/products/:id",
+  },
 };
 
 export default API_CONFIG;
