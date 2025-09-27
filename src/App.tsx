@@ -8,6 +8,8 @@ import Page from "./pages/Page";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Products from "./pages/Products";
+import TabsPage from "./pages/Tabs";
+import TabDetail from "./pages/TabDetail";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -72,13 +74,21 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               </Route>
 
-              <Route path="/tabs" exact={true}>
-                <ProtectedRoute>
-                  <IonRouterOutlet id="main">
-                    <Tabs title="Comandas" dumbString={dumbString} />
-                  </IonRouterOutlet>
-                </ProtectedRoute>
-              </Route>
+               <Route path="/tabs" exact={true}>
+                 <ProtectedRoute>
+                   <IonRouterOutlet id="main">
+                     <TabsPage />
+                   </IonRouterOutlet>
+                 </ProtectedRoute>
+               </Route>
+
+               <Route path="/tabs/:id" exact={true}>
+                 <ProtectedRoute>
+                   <IonRouterOutlet id="main">
+                     <TabDetail />
+                   </IonRouterOutlet>
+                 </ProtectedRoute>
+               </Route>
 
               <Route path="/products" exact={true}>
                 <ProtectedRoute>
@@ -88,21 +98,21 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               </Route>
 
-              <Route path="/reports" exact={true}>
-                <ProtectedRoute>
-                  <IonRouterOutlet id="main">
-                    <Tabs title="Relatórios" dumbString={dumbString} />
-                  </IonRouterOutlet>
-                </ProtectedRoute>
-              </Route>
+               <Route path="/reports" exact={true}>
+                 <ProtectedRoute>
+                   <IonRouterOutlet id="main">
+                     <Page />
+                   </IonRouterOutlet>
+                 </ProtectedRoute>
+               </Route>
 
-              <Route path="/settings" exact={true}>
-                <ProtectedRoute>
-                  <IonRouterOutlet id="main">
-                    <Tabs title="Configurações" dumbString={dumbString} />
-                  </IonRouterOutlet>
-                </ProtectedRoute>
-              </Route>
+               <Route path="/settings" exact={true}>
+                 <ProtectedRoute>
+                   <IonRouterOutlet id="main">
+                     <Page />
+                   </IonRouterOutlet>
+                 </ProtectedRoute>
+               </Route>
 
               {/* Deixando este exemplo abaixo para ver como é utilizado o hook do router */}
               {/* <Route path="/folder/:name" exact={true}>

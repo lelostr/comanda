@@ -19,6 +19,16 @@ export const API_ENDPOINTS = {
     DELETE: "/products/:id",
     SHOW: "/products/:id",
   },
+  TABS: {
+    LIST: "/tabs",
+    CREATE: "/tabs",
+    UPDATE: "/tabs/:id",
+    DELETE: "/tabs/:id",
+    SHOW: "/tabs/:id",
+    ADD_PRODUCT: "/tabs/:id/add-product",
+    REMOVE_PRODUCT: "/tabs/:id/remove-product",
+    CLOSE: "/tabs/:id/close",
+  },
 };
 
 export default API_CONFIG;
