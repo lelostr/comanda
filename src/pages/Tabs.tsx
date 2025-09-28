@@ -176,7 +176,7 @@ const TabsPage: React.FC = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        color: "white",
+                        color: tab.is_closed ? "var(--ion-color-success-contrast)" : "var(--ion-color-primary-contrast)",
                         backgroundColor: tab.is_closed ? "var(--ion-color-success)" : "var(--ion-color-primary)",
                       }}
                     >
@@ -184,7 +184,6 @@ const TabsPage: React.FC = () => {
                     </div>
                     <IonCardHeader>
                       <IonCardTitle>{tab.client_name}</IonCardTitle>
-                      <IonCardSubtitle>Criada em: {formatDate(tab.created_at)}</IonCardSubtitle>
                     </IonCardHeader>
 
                     <IonCardContent>
@@ -247,18 +246,29 @@ const TabsPage: React.FC = () => {
                       </IonList>
                     </IonCardContent>
 
-                    <div style={{ display: "flex", padding: "16px", justifyContent: "space-between" }}>
-                      <IonButton fill="outline" size="small" onClick={() => handleViewTab(tab)}>
-                        <IonIcon icon={eye} slot="start" />
-                        Ver
-                      </IonButton>
+                    <IonButton fill="outline" expand="block" onClick={() => handleViewTab(tab)}>
+                      <IonIcon icon={eye} slot="start" />
+                      Ver
+                    </IonButton>
 
-                      {!tab.is_closed && (
-                        <IonButton fill="outline" color="danger" size="small" onClick={() => handleDeleteTab(tab)}>
-                          <IonIcon icon={trash} slot="start" />
-                          Excluir
-                        </IonButton>
-                      )}
+                    {!tab.is_closed && (
+                      <IonButton fill="outline" expand="block" color="danger" onClick={() => handleDeleteTab(tab)}>
+                        <IonIcon icon={trash} slot="start" />
+                        Excluir
+                      </IonButton>
+                    )}
+
+                    <div
+                      style={{
+                        padding: "4px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "var(--ion-color-medium)",
+                        color: "var(--ion-color-medium-contrast)",
+                      }}
+                    >
+                      {tab.is_closed && tab.closed_at ? `Encerrada em: ${formatDate(tab.closed_at)}` : `Criada em: ${formatDate(tab.created_at)}`}
                     </div>
                   </IonCard>
                 </IonCol>

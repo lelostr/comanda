@@ -159,18 +159,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ remainingAmount, onClose, onS
                 <IonText color="danger">{error}</IonText>
               </div>
             )}
-
-            <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
-              {loading ? (
-                <>
-                  <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                  Adicionando...
-                </>
-              ) : (
-                "Adicionar pagamento"
-              )}
-            </IonButton>
           </IonCardContent>
+
+          <IonButton fill="outline" expand="block" onClick={handleSubmit} disabled={loading}>
+            {loading ? (
+              <>
+                <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
+                Adicionando...
+              </>
+            ) : (
+              "Adicionar pagamento"
+            )}
+          </IonButton>
         </IonCard>
 
         <IonAlert isOpen={showAlert} onDidDismiss={() => setShowAlert(false)} header="Validação" message={alertMessage} buttons={["OK"]} />
