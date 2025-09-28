@@ -17,7 +17,7 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ teste }) => {
-  const title = "Painel inicial";
+  const title = "Dashboard";
 
   return (
     <IonPage>
@@ -39,12 +39,10 @@ const Dashboard: React.FC<DashboardProps> = ({ teste }) => {
           </IonToolbar>
         </IonHeader>
 
-        <IonCard>
-          <IonCardHeader>
-            <IonCardTitle>Primeiro card</IonCardTitle>
-          </IonCardHeader>
-          <IonCardContent>{teste}</IonCardContent>
-        </IonCard>
+        <div id="container">
+          <strong>Bem vindo</strong>
+          <p>Selecione uma opção no menu lateral</p>
+        </div>
       </IonContent>
     </IonPage>
   );
