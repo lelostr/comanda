@@ -27,6 +27,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonBadge,
 } from "@ionic/react";
 import { add, eye, trash, checkmarkCircle } from "ionicons/icons";
 import { Tab } from "../types/tab";
@@ -170,21 +171,21 @@ const TabsPage: React.FC = () => {
               {tabs.map((tab, index) => (
                 <IonCol size="12" size-md="6" size-lg="4" key={index}>
                   <IonCard>
+                    <IonCardHeader color={tab.is_closed ? "primary" : "success"}>
+                      <IonCardTitle>{tab.client_name}</IonCardTitle>
+                    </IonCardHeader>
                     <div
                       style={{
                         padding: "4px",
                         display: "flex",
-                        justifyContent: "space-between",
+                        justifyContent: "center",
                         alignItems: "center",
-                        color: tab.is_closed ? "var(--ion-color-success-contrast)" : "var(--ion-color-primary-contrast)",
-                        backgroundColor: tab.is_closed ? "var(--ion-color-success)" : "var(--ion-color-primary)",
+                        backgroundColor: "var(--ion-color-medium)",
+                        color: "var(--ion-color-medium-contrast)",
                       }}
                     >
-                      {tab.is_closed ? "Encerrada" : "Aberta"}
+                      {tab.is_closed && tab.closed_at ? `Encerrada em: ${formatDate(tab.closed_at)}` : `Criada em: ${formatDate(tab.created_at)}`}
                     </div>
-                    <IonCardHeader>
-                      <IonCardTitle>{tab.client_name}</IonCardTitle>
-                    </IonCardHeader>
 
                     <IonCardContent>
                       <IonList>
@@ -215,7 +216,7 @@ const TabsPage: React.FC = () => {
                             <IonLabel>{formatPrice(tab.total_value)}</IonLabel>
                           </div>
                         </IonItem>
-                        <IonItem>
+                        {!tab.is_closed && <IonItem>
                           <div
                             style={{
                               width: "100%",
@@ -228,8 +229,8 @@ const TabsPage: React.FC = () => {
                             <IonLabel>Pago</IonLabel>
                             <IonLabel>{formatPrice(tab.total_paid)}</IonLabel>
                           </div>
-                        </IonItem>
-                        <IonItem>
+                        </IonItem>}
+                        {!tab.is_closed && <IonItem>
                           <div
                             style={{
                               width: "100%",
@@ -242,7 +243,7 @@ const TabsPage: React.FC = () => {
                             <IonLabel>Restante</IonLabel>
                             <IonLabel>{formatPrice(tab.remaining_amount)}</IonLabel>
                           </div>
-                        </IonItem>
+                        </IonItem>}
                       </IonList>
                     </IonCardContent>
 
@@ -257,19 +258,6 @@ const TabsPage: React.FC = () => {
                         Excluir
                       </IonButton>
                     )}
-
-                    <div
-                      style={{
-                        padding: "4px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "var(--ion-color-medium)",
-                        color: "var(--ion-color-medium-contrast)",
-                      }}
-                    >
-                      {tab.is_closed && tab.closed_at ? `Encerrada em: ${formatDate(tab.closed_at)}` : `Criada em: ${formatDate(tab.created_at)}`}
-                    </div>
                   </IonCard>
                 </IonCol>
               ))}
