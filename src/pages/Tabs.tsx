@@ -22,10 +22,11 @@ import {
   IonRow,
   IonCol,
   IonText,
-  IonChip,
-  IonBadge,
   IonButtons,
   IonMenuButton,
+  IonItem,
+  IonLabel,
+  IonList,
 } from "@ionic/react";
 import { add, eye, trash, checkmarkCircle } from "ionicons/icons";
 import { Tab } from "../types/tab";
@@ -169,47 +170,84 @@ const TabsPage: React.FC = () => {
               {tabs.map((tab) => (
                 <IonCol size="12" size-md="6" size-lg="4" key={tab.id}>
                   <IonCard>
+                    <div
+                      style={{
+                        padding: "4px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        color: "white",
+                        backgroundColor: tab.is_closed ? "var(--ion-color-success)" : "var(--ion-color-primary)",
+                      }}
+                    >
+                      {tab.is_closed ? "Encerrada" : "Aberta"}
+                    </div>
                     <IonCardHeader>
                       <IonCardTitle>{tab.client_name}</IonCardTitle>
-                      <IonCardSubtitle>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <IonChip color={tab.is_closed ? "success" : "primary"}>{tab.is_closed ? "Encerrada" : "Aberta"}</IonChip>
-                          {tab.is_closed && tab.closed_at && (
-                            <IonText color="medium" style={{ fontSize: "0.8rem" }}>
-                              {formatDate(tab.closed_at)}
-                            </IonText>
-                          )}
-                        </div>
-                      </IonCardSubtitle>
+                      <IonCardSubtitle>Criada em: {formatDate(tab.created_at)}</IonCardSubtitle>
                     </IonCardHeader>
 
                     <IonCardContent>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                        <IonText color="primary">
-                          <h2 style={{ margin: 0, fontSize: "1.5rem" }}>{formatPrice(tab.total_value)}</h2>
-                        </IonText>
-                        <IonBadge color="medium">
-                          {tab.total_items} {tab.total_items === 1 ? "item" : "itens"}
-                        </IonBadge>
-                      </div>
-
-                      <div style={{ marginBottom: "8px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <IonText color="success" style={{ fontSize: "0.9rem" }}>
-                            <strong>Pago: {formatPrice(tab.total_paid)}</strong>
-                          </IonText>
-                          <IonText color={tab.remaining_amount > 0 ? "warning" : "success"} style={{ fontSize: "0.9rem" }}>
-                            <strong>Restante: {formatPrice(tab.remaining_amount)}</strong>
-                          </IonText>
-                        </div>
-                      </div>
-
-                      <IonText color="medium" style={{ fontSize: "0.9rem" }}>
-                        Criada em: {formatDate(tab.created_at)}
-                      </IonText>
+                      <IonList>
+                        <IonItem>
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <IonLabel>Itens</IonLabel>
+                            <IonLabel>{tab.total_items}</IonLabel>
+                          </div>
+                        </IonItem>
+                        <IonItem>
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              color: "var(--ion-color-primary)",
+                            }}
+                          >
+                            <IonLabel>Total</IonLabel>
+                            <IonLabel>{formatPrice(tab.total_value)}</IonLabel>
+                          </div>
+                        </IonItem>
+                        <IonItem>
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              color: "var(--ion-color-success)",
+                            }}
+                          >
+                            <IonLabel>Pago</IonLabel>
+                            <IonLabel>{formatPrice(tab.total_paid)}</IonLabel>
+                          </div>
+                        </IonItem>
+                        <IonItem>
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              color: tab.remaining_amount > 0 ? "var(--ion-color-warning)" : "var(--ion-color-success)",
+                            }}
+                          >
+                            <IonLabel>Restante</IonLabel>
+                            <IonLabel>{formatPrice(tab.remaining_amount)}</IonLabel>
+                          </div>
+                        </IonItem>
+                      </IonList>
                     </IonCardContent>
 
-                    <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
+                    <div style={{ display: "flex", padding: "16px", justifyContent: "space-between" }}>
                       <IonButton fill="outline" size="small" onClick={() => handleViewTab(tab)}>
                         <IonIcon icon={eye} slot="start" />
                         Ver
