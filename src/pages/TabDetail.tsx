@@ -282,25 +282,25 @@ const TabDetail: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color={tab.is_closed ? "primary" : "success"}>
           <IonButtons slot="start">
             <IonBackButton defaultHref="/tabs" />
           </IonButtons>
           <IonTitle>{tab.client_name}</IonTitle>
         </IonToolbar>
-        <div
-          style={{
-            padding: "4px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            color: "white",
-            backgroundColor: tab.is_closed ? "var(--ion-color-success)" : "var(--ion-color-primary)",
-          }}
-        >
-          {tab.is_closed ? "Encerrada" : "Aberta"}
-        </div>
       </IonHeader>
+      <div
+        style={{
+          padding: "4px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "var(--ion-color-medium)",
+          color: "var(--ion-color-medium-contrast)",
+        }}
+      >
+        {tab.is_closed && tab.closed_at ? `Encerrada em: ${formatDate(tab.closed_at)}` : `Criada em: ${formatDate(tab.created_at)}`}
+      </div>
 
       <IonContent>
         <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>

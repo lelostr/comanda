@@ -216,34 +216,38 @@ const TabsPage: React.FC = () => {
                             <IonLabel>{formatPrice(tab.total_value)}</IonLabel>
                           </div>
                         </IonItem>
-                        {!tab.is_closed && <IonItem>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              color: "var(--ion-color-success)",
-                            }}
-                          >
-                            <IonLabel>Pago</IonLabel>
-                            <IonLabel>{formatPrice(tab.total_paid)}</IonLabel>
-                          </div>
-                        </IonItem>}
-                        {!tab.is_closed && <IonItem>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              color: tab.remaining_amount > 0 ? "var(--ion-color-warning)" : "var(--ion-color-success)",
-                            }}
-                          >
-                            <IonLabel>Restante</IonLabel>
-                            <IonLabel>{formatPrice(tab.remaining_amount)}</IonLabel>
-                          </div>
-                        </IonItem>}
+                        {!tab.is_closed && (
+                          <IonItem>
+                            <div
+                              style={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                color: "var(--ion-color-success)",
+                              }}
+                            >
+                              <IonLabel>Pago</IonLabel>
+                              <IonLabel>{formatPrice(tab.total_paid)}</IonLabel>
+                            </div>
+                          </IonItem>
+                        )}
+                        {!tab.is_closed && (
+                          <IonItem>
+                            <div
+                              style={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                color: tab.remaining_amount > 0 ? "var(--ion-color-warning)" : "var(--ion-color-success)",
+                              }}
+                            >
+                              <IonLabel>Restante</IonLabel>
+                              <IonLabel>{formatPrice(tab.remaining_amount)}</IonLabel>
+                            </div>
+                          </IonItem>
+                        )}
                       </IonList>
                     </IonCardContent>
 
