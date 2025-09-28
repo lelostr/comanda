@@ -409,7 +409,7 @@ const TabDetail: React.FC = () => {
         <IonModal isOpen={showProductsModal} onDidDismiss={() => setShowProductsModal(false)}>
           <IonHeader>
             <IonToolbar>
-              <IonTitle>Adicionar Produto</IonTitle>
+              <IonTitle>Adicionar produto</IonTitle>
               <IonButtons slot="end">
                 <IonButton onClick={() => setShowProductsModal(false)}>Fechar</IonButton>
               </IonButtons>

@@ -18,6 +18,8 @@ import {
   IonCard,
   IonCardContent,
   IonText,
+  IonFooter,
+  IonBadge,
 } from "@ionic/react";
 import { PaymentFormData, PAYMENT_METHODS } from "../types/tab";
 
@@ -100,34 +102,30 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ remainingAmount, onClose, onS
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs" />
+          <IonTitle>Adicionar pagamento</IonTitle>
+
+          <IonButtons slot="end">
+            <IonButton onClick={onClose}>Fechar</IonButton>
           </IonButtons>
-          <IonTitle>Adicionar Pagamento</IonTitle>
         </IonToolbar>
       </IonHeader>
 
       <IonContent>
         <IonCard>
           <IonCardContent>
-            <div style={{ textAlign: "center", marginBottom: "20px" }}>
-              <IonText color="primary">
-                <h3>Valor Restante: {formatPrice(remainingAmount)}</h3>
-              </IonText>
-            </div>
-
             <IonItem>
-              <IonLabel position="stacked">Nome do Pagador (Opcional)</IonLabel>
               <IonInput
                 value={formData.payer_name}
                 onIonInput={(e) => handleInputChange("payer_name", e.detail.value!)}
-                placeholder="Digite o nome do pagador"
+                label="Nome do pagador"
+                labelPlacement="floating"
               />
             </IonItem>
 
             <IonItem>
-              <IonLabel position="stacked">Valor do Pagamento *</IonLabel>
               <IonInput
+                label="Valor do pagamento *"
+                labelPlacement="floating"
                 type="number"
                 value={formData.payment_value}
                 onIonInput={(e) => handleInputChange("payment_value", e.detail.value!)}
@@ -140,8 +138,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ remainingAmount, onClose, onS
             </IonItem>
 
             <IonItem>
-              <IonLabel position="stacked">Método de Pagamento *</IonLabel>
               <IonSelect
+                label="Método de pagamento *"
+                labelPlacement="floating"
                 value={formData.payment_method}
                 onIonChange={(e) => handleInputChange("payment_method", e.detail.value)}
                 placeholder="Selecione o método"
@@ -161,27 +160,39 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ remainingAmount, onClose, onS
               </div>
             )}
 
-            <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
-              <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
-                {loading ? (
-                  <>
-                    <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                    Processando...
-                  </>
-                ) : (
-                  "Adicionar Pagamento"
-                )}
-              </IonButton>
-
-              <IonButton expand="block" fill="outline" onClick={onClose} disabled={loading}>
-                Cancelar
-              </IonButton>
-            </div>
+            <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
+              {loading ? (
+                <>
+                  <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
+                  Adicionando...
+                </>
+              ) : (
+                "Adicionar pagamento"
+              )}
+            </IonButton>
           </IonCardContent>
         </IonCard>
 
         <IonAlert isOpen={showAlert} onDidDismiss={() => setShowAlert(false)} header="Validação" message={alertMessage} buttons={["OK"]} />
       </IonContent>
+
+      <IonFooter>
+        <IonToolbar color="medium">
+          <div
+            style={{
+              paddingLeft: "16px",
+              paddingRight: "16px",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Restante: {formatPrice(remainingAmount)}
+          </div>
+        </IonToolbar>
+      </IonFooter>
     </IonPage>
   );
 };

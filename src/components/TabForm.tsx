@@ -101,32 +101,24 @@ const TabForm: React.FC<TabFormProps> = ({ onClose, onSubmit }) => {
               </div>
             )}
 
-            <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
-              <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
-                {loading ? (
-                  <>
-                    <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                    Criando...
-                  </>
-                ) : (
-                  "Criar Comanda"
-                )}
-              </IonButton>
+            <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
+              {loading ? (
+                <>
+                  <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
+                  Criando...
+                </>
+              ) : (
+                "Criar comanda"
+              )}
+            </IonButton>
 
-              <IonButton expand="block" fill="outline" onClick={onClose} disabled={loading}>
-                Cancelar
-              </IonButton>
-            </div>
+            <IonButton expand="block" fill="outline" onClick={onClose} disabled={loading}>
+              Cancelar
+            </IonButton>
           </IonCardContent>
         </IonCard>
 
-        <IonAlert
-          isOpen={showAlert}
-          onDidDismiss={() => setShowAlert(false)}
-          header="Validação"
-          message={alertMessage}
-          buttons={["OK"]}
-        />
+        <IonAlert isOpen={showAlert} onDidDismiss={() => setShowAlert(false)} header="Validação" message={alertMessage} buttons={["OK"]} />
       </IonContent>
     </IonPage>
   );
