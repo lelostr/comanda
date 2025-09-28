@@ -168,7 +168,7 @@ const Menu: React.FC = () => {
           <IonItemSliding>
             <IonItem button={true}>
               <IonAvatar aria-hidden="true" slot="start">
-                <img alt="" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+                <img alt="" src="https://picsum.photos/256/256" />
               </IonAvatar>
               <IonLabel>{user?.email || "user@mail.com"}</IonLabel>
             </IonItem>

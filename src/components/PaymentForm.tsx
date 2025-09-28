@@ -20,6 +20,7 @@ import {
   IonText,
   IonFooter,
   IonBadge,
+  IonChip,
 } from "@ionic/react";
 import { PaymentFormData, PAYMENT_METHODS } from "../types/tab";
 
@@ -177,19 +178,16 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ remainingAmount, onClose, onS
       </IonContent>
 
       <IonFooter>
-        <IonToolbar color="medium">
+        <IonToolbar>
           <div
             style={{
-              paddingLeft: "16px",
-              paddingRight: "16px",
               display: "flex",
               flexWrap: "wrap",
               justifyContent: "center",
-              alignItems: "center",
-              fontWeight: "bold",
+              alignContent: "center",
             }}
           >
-            Restante: {formatPrice(remainingAmount)}
+            <IonChip color="warning">Restante: {formatPrice(remainingAmount)}</IonChip>
           </div>
         </IonToolbar>
       </IonFooter>

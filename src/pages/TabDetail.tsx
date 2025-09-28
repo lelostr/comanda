@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   IonContent,
   IonHeader,
@@ -6,25 +6,14 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
   IonSpinner,
   IonAlert,
   IonRefresher,
   IonRefresherContent,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonText,
-  IonChip,
-  IonBadge,
   IonIcon,
   IonItem,
   IonLabel,
-  IonInput,
   IonBackButton,
   IonButtons,
   IonFab,
@@ -41,10 +30,11 @@ import {
   IonTabButton,
   IonTab,
   IonAvatar,
+  IonChip,
 } from "@ionic/react";
-import { add, remove, checkmarkCircle, trash, card, fastFoodSharp } from "ionicons/icons";
+import { add, checkmarkCircle, trash, card, fastFoodSharp, fastFood } from "ionicons/icons";
 import { useParams, useHistory } from "react-router-dom";
-import { Tab, TabProduct, TabPayment, PaymentFormData } from "../types/tab";
+import { Tab, PaymentFormData } from "../types/tab";
 import { Product } from "../types/product";
 import { tabService } from "../services/tabService";
 import { productService } from "../services/productService";
@@ -66,29 +56,59 @@ const TabDetail: React.FC = () => {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [error, setError] = useState<string>("");
 
+  // Refs para controle de debounce
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isLoadedRef = useRef<boolean>(false);
+
   const loadTab = useCallback(async () => {
     if (!id) return;
 
-    if (tab && tab.id === id) return;
+    // Evitar carregamento duplicado
+    if (isLoadedRef.current) return;
 
-    try {
-      setLoading(true);
-      setError("");
-      const tabData = await tabService.getTab(id);
-      setTab(tabData);
-    } catch (err) {
-      console.error("Erro ao carregar comanda:", err);
-      setError("Erro ao carregar comanda");
-    } finally {
-      setLoading(false);
+    // Limpar timeout anterior se existir
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
     }
+
+    // Debounce de 300ms para evitar chamadas repetidas
+    loadingTimeoutRef.current = setTimeout(async () => {
+      try {
+        setLoading(true);
+        setError("");
+        isLoadedRef.current = true;
+
+        const tabData = await tabService.getTab(id);
+        setTab(tabData);
+      } catch (err) {
+        console.error("Erro ao carregar comanda:", err);
+        setError("Erro ao carregar comanda");
+        isLoadedRef.current = false;
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
   }, [id]);
 
   useEffect(() => {
+    // Reset do estado quando o ID mudar
+    isLoadedRef.current = false;
+    setTab(null);
+    setError("");
+
     loadTab();
-  }, [loadTab]);
+
+    // Cleanup do timeout quando o componente for desmontado
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, [id, loadTab]); // Incluir loadTab para garantir que seja chamado
 
   const handleRefresh = async (event: CustomEvent) => {
+    // Reset do estado para permitir recarregamento
+    isLoadedRef.current = false;
     await loadTab();
     event.detail.complete();
   };
@@ -290,7 +310,7 @@ const TabDetail: React.FC = () => {
         <IonTabs>
           <IonTabBar slot="top">
             <IonTabButton tab="products">
-              <IonIcon icon={fastFoodSharp} />
+              <IonIcon icon={fastFood} />
             </IonTabButton>
 
             <IonTabButton tab="payments">
@@ -318,8 +338,8 @@ const TabDetail: React.FC = () => {
                   tab.products.map((product, index) => (
                     <IonItemSliding key={index}>
                       <IonItem button={true} lines="none">
-                        <IonAvatar aria-hidden="true" slot="start">
-                          <img alt="" src="https://picsum.photos/256/256" />
+                        <IonAvatar aria-hidden="true" slot="start" style={{ alignContent: "center", textAlign: "center" }}>
+                          <IonIcon icon={fastFood} />
                         </IonAvatar>
                         <IonLabel>
                           <div
@@ -375,12 +395,8 @@ const TabDetail: React.FC = () => {
                 {tab.payments && tab.payments.length > 0 ? (
                   tab.payments.map((payment, index) => (
                     <IonItem key={index} button={true} lines="none">
-                      <IonAvatar
-                        aria-hidden="true"
-                        slot="start"
-                        style={{ alignItems: "center", justifyContent: "center", backgroundColor: "var(--ion-color-primary)" }}
-                      >
-                        <img alt="" src="https://picsum.photos/256/256" />
+                      <IonAvatar aria-hidden="true" slot="start" style={{ alignContent: "center", textAlign: "center" }}>
+                        <IonIcon icon={card} />
                       </IonAvatar>
                       <IonLabel>
                         <div
@@ -485,32 +501,16 @@ const TabDetail: React.FC = () => {
         <IonToolbar>
           <div
             style={{
-              paddingLeft: "16px",
-              paddingRight: "16px",
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "space-between",
+              justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <IonBadge color="primary">Total: {formatPrice(tab.total_value)}</IonBadge>
-            <IonBadge color="success">Pago: {formatPrice(tab.total_paid)}</IonBadge>
-            <IonBadge color="warning">Restante: {formatPrice(tab.remaining_amount)}</IonBadge>
+            <IonChip color="primary">Total: {formatPrice(tab.total_value)}</IonChip>
+            <IonChip color="success">Pago: {formatPrice(tab.total_paid)}</IonChip>
+            <IonChip color="warning">Restante: {formatPrice(tab.remaining_amount)}</IonChip>
           </div>
-          {/* <IonItem lines="none">
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                color: "var(--ion-color-primary)",
-              }}
-            >
-              <IonLabel>Total</IonLabel>
-              <IonLabel>{formatPrice(tab.total_value)}</IonLabel>
-            </div>
-          </IonItem> */}
         </IonToolbar>
       </IonFooter>
     </IonPage>
