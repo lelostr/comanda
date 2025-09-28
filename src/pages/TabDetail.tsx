@@ -40,6 +40,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTab,
+  IonAvatar,
 } from "@ionic/react";
 import { add, remove, checkmarkCircle, trash, card, fastFoodSharp } from "ionicons/icons";
 import { useParams, useHistory } from "react-router-dom";
@@ -278,49 +279,44 @@ const TabDetail: React.FC = () => {
               >
                 {tab.total_items} {tab.total_items === 1 ? "item" : "itens"}
               </div>
-              
-              {tab.products && tab.products.length > 0 ? (
-                <IonGrid>
-                  <IonRow>
-                    {tab.products.map((product, index) => (
-                      <IonCol size="12" key={index}>
-                        <IonCard>
-                          <IonCardContent>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <div style={{ flex: 1 }}>
-                                <h3 style={{ margin: "0 0 4px 0" }}>{product.name}</h3>
-                                <IonChip color="medium" style={{ fontSize: "0.8rem" }}>
-                                  {product.category}
-                                </IonChip>
-                                <div style={{ marginTop: "8px" }}>
-                                  <IonText color="primary">
-                                    <strong>{formatPrice(product.subtotal)}</strong>
-                                  </IonText>
-                                  <IonText color="medium" style={{ marginLeft: "8px" }}>
-                                    ({product.quantity}x {formatPrice(product.price)})
-                                  </IonText>
-                                </div>
-                              </div>
 
-                              {!tab.is_closed && (
-                                <IonButton fill="outline" color="danger" size="small" onClick={() => handleRemoveProduct(product.id)}>
-                                  <IonIcon icon={remove} />
-                                </IonButton>
-                              )}
-                            </div>
-                          </IonCardContent>
-                        </IonCard>
-                      </IonCol>
-                    ))}
-                  </IonRow>
-                </IonGrid>
-              ) : (
-                <div style={{ padding: "20px", textAlign: "center" }}>
-                  <IonText color="medium">
-                    <p>Nenhum produto adicionado</p>
-                  </IonText>
-                </div>
-              )}
+              <IonList style={{ margin: "16px" }}>
+                {tab.products && tab.products.length > 0 ? (
+                  tab.products.map((product, index) => (
+                    <IonItemSliding key={index}>
+                      <IonItem button={true} lines="none">
+                        <IonAvatar aria-hidden="true" slot="start">
+                          <img alt="" src="https://picsum.photos/256/256" />
+                        </IonAvatar>
+                        <IonLabel>
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <IonLabel>{product.name}</IonLabel>
+                            <IonLabel>{formatPrice(product.price)}</IonLabel>
+                          </div>
+                        </IonLabel>
+                      </IonItem>
+                      {!tab.is_closed && (
+                        <IonItemOptions slot="end">
+                          <IonItemOption color="danger" expandable={true} onClick={() => handleRemoveProduct(product.id)}>
+                            <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                          </IonItemOption>
+                        </IonItemOptions>
+                      )}
+                    </IonItemSliding>
+                  ))
+                ) : (
+                  <IonItem button={true} lines="none">
+                    Nenhum produto adicionado
+                  </IonItem>
+                )}
+              </IonList>
             </IonContent>
           </IonTab>
           <IonTab tab="payments">
