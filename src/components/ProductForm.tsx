@@ -122,10 +122,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose, onSubmit })
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/products" />
+          <IonTitle>{isEditing ? "Atualizar produto" : "Novo produto"}</IonTitle>
+
+          <IonButtons slot="end">
+            <IonButton onClick={onClose}>Fechar</IonButton>
           </IonButtons>
-          <IonTitle>{isEditing ? "Editar Produto" : "Novo Produto"}</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -133,8 +134,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose, onSubmit })
         <IonCard>
           <IonCardContent>
             <IonItem>
-              <IonLabel position="stacked">Nome *</IonLabel>
               <IonInput
+                label="Nome *"
+                labelPlacement="floating"
                 value={formData.name}
                 onIonInput={(e) => handleInputChange("name", e.detail.value!)}
                 placeholder="Digite o nome do produto"
@@ -143,12 +145,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose, onSubmit })
             </IonItem>
 
             <IonItem>
-              <IonLabel position="stacked">Categoria *</IonLabel>
               <IonSelect
                 value={formData.category}
                 onIonChange={(e) => handleInputChange("category", e.detail.value)}
                 placeholder="Selecione a categoria"
                 interface="popover"
+                label="Categoria *"
+                labelPlacement="floating"
               >
                 {PRODUCT_CATEGORIES.map((category) => (
                   <IonSelectOption key={category} value={category}>
@@ -159,8 +162,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose, onSubmit })
             </IonItem>
 
             <IonItem>
-              <IonLabel position="stacked">Preço *</IonLabel>
               <IonInput
+                label="Preço *"
+                labelPlacement="floating"
                 type="number"
                 value={formData.price}
                 onIonInput={(e) => handleInputChange("price", e.detail.value!)}
@@ -172,8 +176,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose, onSubmit })
             </IonItem>
 
             <IonItem>
-              <IonLabel position="stacked">Descrição</IonLabel>
               <IonTextarea
+                label="Descrição"
+                labelPlacement="floating"
                 value={formData.description}
                 onIonInput={(e) => handleInputChange("description", e.detail.value!)}
                 placeholder="Descrição do produto (opcional)"
@@ -186,26 +191,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose, onSubmit })
                 <IonLabel color="danger">{error}</IonLabel>
               </div>
             )}
-
-            <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
-              <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
-                {loading ? (
-                  <>
-                    <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                    Salvando...
-                  </>
-                ) : isEditing ? (
-                  "Atualizar"
-                ) : (
-                  "Criar"
-                )}
-              </IonButton>
-
-              <IonButton expand="block" fill="outline" onClick={onClose} disabled={loading}>
-                Cancelar
-              </IonButton>
-            </div>
           </IonCardContent>
+
+          <IonButton expand="block" fill="outline" onClick={handleSubmit} disabled={loading}>
+            {loading ? (
+              <>
+                <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
+                Salvando...
+              </>
+            ) : isEditing ? (
+              "Atualizar"
+            ) : (
+              "Criar"
+            )}
+          </IonButton>
         </IonCard>
 
         <IonAlert isOpen={showAlert} onDidDismiss={() => setShowAlert(false)} header="Validação" message={alertMessage} buttons={["OK"]} />

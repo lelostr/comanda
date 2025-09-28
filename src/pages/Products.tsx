@@ -25,6 +25,9 @@ import {
   IonChip,
   IonButtons,
   IonMenuButton,
+  IonItem,
+  IonList,
+  IonLabel,
 } from "@ionic/react";
 import { add, create, trash } from "ionicons/icons";
 import { Product } from "../types/product";
@@ -161,30 +164,53 @@ const Products: React.FC = () => {
               {products.map((product) => (
                 <IonCol size="12" size-md="6" size-lg="4" key={product.id}>
                   <IonCard>
-                    <IonCardHeader>
+                    <IonCardHeader color="primary">
                       <IonCardTitle>{product.name}</IonCardTitle>
-                      <IonCardSubtitle>
-                        <IonChip color="primary">{product.category}</IonChip>
-                      </IonCardSubtitle>
+                      <IonCardSubtitle>{product.category}</IonCardSubtitle>
                     </IonCardHeader>
 
+                    {product.description && (
+                      <div
+                        style={{
+                          padding: "4px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "var(--ion-color-medium)",
+                          color: "var(--ion-color-medium-contrast)",
+                        }}
+                      >
+                        {product.description}
+                      </div>
+                    )}
+
                     <IonCardContent>
-                      <IonText color="primary">
-                        <h2 style={{ margin: 0, fontSize: "1.5rem" }}>{formatPrice(product.price)}</h2>
-                      </IonText>
-                      {product.description && <p style={{ marginTop: "10px", color: "var(--ion-color-medium)" }}>{product.description}</p>}
+                      <IonList>
+                        <IonItem lines="none">
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <IonLabel>Preço</IonLabel>
+                            <IonLabel>{formatPrice(product.price)}</IonLabel>
+                          </div>
+                        </IonItem>
+                      </IonList>
                     </IonCardContent>
 
-                    <div style={{ padding: "16px", display: "flex", gap: "8px" }}>
-                      <IonButton fill="outline" size="small" onClick={() => handleEditProduct(product)}>
-                        <IonIcon icon={create} slot="start" />
-                        Editar
-                      </IonButton>
-                      <IonButton fill="outline" color="danger" size="small" onClick={() => handleDeleteProduct(product)}>
-                        <IonIcon icon={trash} slot="start" />
-                        Excluir
-                      </IonButton>
-                    </div>
+                    <IonButton expand="block" fill="outline" onClick={() => handleEditProduct(product)}>
+                      <IonIcon icon={create} slot="start" />
+                      Editar
+                    </IonButton>
+
+                    <IonButton expand="block" fill="outline" color="danger" onClick={() => handleDeleteProduct(product)}>
+                      <IonIcon icon={trash} slot="start" />
+                      Excluir
+                    </IonButton>
                   </IonCard>
                 </IonCol>
               ))}

@@ -174,6 +174,7 @@ const TabsPage: React.FC = () => {
                     <IonCardHeader color={tab.is_closed ? "primary" : "success"}>
                       <IonCardTitle>{tab.client_name}</IonCardTitle>
                     </IonCardHeader>
+
                     <div
                       style={{
                         padding: "4px",

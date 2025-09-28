@@ -75,10 +75,11 @@ const TabForm: React.FC<TabFormProps> = ({ onClose, onSubmit }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs" />
+          <IonTitle>Nova comanda</IonTitle>
+
+          <IonButtons slot="end">
+            <IonButton onClick={onClose}>Fechar</IonButton>
           </IonButtons>
-          <IonTitle>Nova Comanda</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -86,8 +87,9 @@ const TabForm: React.FC<TabFormProps> = ({ onClose, onSubmit }) => {
         <IonCard>
           <IonCardContent>
             <IonItem>
-              <IonLabel position="stacked">Nome do Cliente *</IonLabel>
               <IonInput
+                label="Nome do cliente *"
+                labelPlacement="floating"
                 value={formData.client_name}
                 onIonInput={(e) => handleInputChange("client_name", e.detail.value!)}
                 placeholder="Digite o nome do cliente"
@@ -100,22 +102,18 @@ const TabForm: React.FC<TabFormProps> = ({ onClose, onSubmit }) => {
                 <IonLabel color="danger">{error}</IonLabel>
               </div>
             )}
-
-            <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
-              {loading ? (
-                <>
-                  <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                  Criando...
-                </>
-              ) : (
-                "Criar comanda"
-              )}
-            </IonButton>
-
-            <IonButton expand="block" fill="outline" onClick={onClose} disabled={loading}>
-              Cancelar
-            </IonButton>
           </IonCardContent>
+
+          <IonButton expand="block" fill="outline" onClick={handleSubmit} disabled={loading}>
+            {loading ? (
+              <>
+                <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
+                Salvando...
+              </>
+            ) : (
+              "Criar"
+            )}
+          </IonButton>
         </IonCard>
 
         <IonAlert isOpen={showAlert} onDidDismiss={() => setShowAlert(false)} header="Validação" message={alertMessage} buttons={["OK"]} />

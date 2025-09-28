@@ -166,7 +166,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ remainingAmount, onClose, onS
             {loading ? (
               <>
                 <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                Adicionando...
+                Salvando...
               </>
             ) : (
               "Adicionar pagamento"
