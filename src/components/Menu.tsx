@@ -50,17 +50,17 @@ interface AppMenu {
 }
 
 const appMenus: AppMenu[] = [
-  // {
-  //   title: "Principal",
-  //   pages: [
-  //     {
-  //       title: "Painel",
-  //       url: "/dashboard",
-  //       iosIcon: homeOutline,
-  //       mdIcon: homeSharp,
-  //     },
-  //   ],
-  // },
+  {
+    title: "Principal",
+    pages: [
+      {
+        title: "Painel",
+        url: "/dashboard",
+        iosIcon: homeOutline,
+        mdIcon: homeSharp,
+      },
+    ],
+  },
   {
     title: "Operacional",
     pages: [

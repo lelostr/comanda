@@ -112,18 +112,18 @@ const Login: React.FC = () => {
                   <IonIcon icon={showPassword ? eyeOffOutline : eyeOutline} />
                 </IonButton>
               </IonItem>
-
-              <IonButton expand="block" onClick={handleLogin} disabled={isLoading} style={{ marginTop: "20px" }}>
-                {isLoading ? (
-                  <>
-                    <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-                    Entrando...
-                  </>
-                ) : (
-                  "Entrar"
-                )}
-              </IonButton>
             </IonCardContent>
+
+            <IonButton expand="block" fill="outline" onClick={handleLogin} disabled={isLoading} style={{ marginTop: "20px" }}>
+              {isLoading ? (
+                <>
+                  <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
+                  Entrando...
+                </>
+              ) : (
+                "Entrar"
+              )}
+            </IonButton>
           </IonCard>
         </div>
 
