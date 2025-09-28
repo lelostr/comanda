@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   IonContent,
   IonHeader,
@@ -50,19 +50,26 @@ import { tabService } from "../services/tabService";
 import { productService } from "../services/productService";
 import PaymentForm from "../components/PaymentForm";
 
+// Cache global para produtos disponíveis (todos os produtos do sistema)
+let availableProductsCache: Product[] = [];
+let availableProductsCacheTimestamp: number = 0;
+const PRODUCTS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
 const TabDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const [tab, setTab] = useState<Tab | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showProductsModal, setShowProductsModal] = useState(false);
   const [showCloseAlert, setShowCloseAlert] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const loadTab = async () => {
+  const loadTab = useCallback(async () => {
     if (!id) return;
+
+    if (tab && tab.id === id) return;
 
     try {
       setLoading(true);
@@ -75,95 +82,94 @@ const TabDetail: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadProducts = async () => {
-    try {
-      const productsData = await productService.getProducts();
-      setProducts(productsData);
-    } catch (err) {
-      console.error("Erro ao carregar produtos:", err);
-    }
-  };
+  }, [id]);
 
   useEffect(() => {
     loadTab();
-    loadProducts();
-  }, [id]);
+  }, [loadTab]);
 
   const handleRefresh = async (event: CustomEvent) => {
     await loadTab();
     event.detail.complete();
   };
 
-  const handleAddProduct = async (product: Product, quantity: number = 1) => {
+  const handleAddProduct = useCallback(
+    async (product: Product, quantity: number = 1) => {
+      if (!tab || tab.is_closed) return;
+
+      try {
+        const updatedTab = await tabService.addProductToTab(tab.id, {
+          product_id: product.id,
+          quantity: quantity,
+        });
+        setTab(updatedTab); // Atualiza o estado local em vez de recarregar
+        setShowProductsModal(false);
+      } catch (err) {
+        console.error("Erro ao adicionar produto:", err);
+        setError("Erro ao adicionar produto");
+      }
+    },
+    [tab]
+  );
+
+  const handleRemoveProduct = useCallback(
+    async (productId: string) => {
+      if (!tab || tab.is_closed) return;
+
+      try {
+        const updatedTab = await tabService.removeProductFromTab(tab.id, {
+          product_id: productId,
+        });
+        setTab(updatedTab); // Atualiza o estado local em vez de recarregar
+      } catch (err) {
+        console.error("Erro ao remover produto:", err);
+        setError("Erro ao remover produto");
+      }
+    },
+    [tab]
+  );
+
+  const handleCloseTab = useCallback(async () => {
     if (!tab || tab.is_closed) return;
 
     try {
-      await tabService.addProductToTab(tab.id, {
-        product_id: product.id,
-        quantity: quantity,
-      });
-      await loadTab();
-      setShowProductsModal(false);
-    } catch (err) {
-      console.error("Erro ao adicionar produto:", err);
-      setError("Erro ao adicionar produto");
-    }
-  };
-
-  const handleRemoveProduct = async (productId: string) => {
-    if (!tab || tab.is_closed) return;
-
-    try {
-      await tabService.removeProductFromTab(tab.id, {
-        product_id: productId,
-      });
-      await loadTab();
-    } catch (err) {
-      console.error("Erro ao remover produto:", err);
-      setError("Erro ao remover produto");
-    }
-  };
-
-  const handleCloseTab = async () => {
-    if (!tab || tab.is_closed) return;
-
-    try {
-      await tabService.closeTab(tab.id);
-      await loadTab();
+      const updatedTab = await tabService.closeTab(tab.id);
+      setTab(updatedTab); // Atualiza o estado local em vez de recarregar
       setShowCloseAlert(false);
     } catch (err) {
       console.error("Erro ao encerrar comanda:", err);
       setError("Erro ao encerrar comanda");
     }
-  };
+  }, [tab]);
 
-  const handleAddPayment = async (paymentData: PaymentFormData) => {
-    if (!tab) return;
+  const handleAddPayment = useCallback(
+    async (paymentData: PaymentFormData) => {
+      if (!tab) return;
 
-    try {
-      await tabService.addPaymentToTab(tab.id, {
-        payer_name: paymentData.payer_name || undefined,
-        payment_value: parseFloat(paymentData.payment_value),
-        payment_method: paymentData.payment_method,
-      });
-      await loadTab();
-      setShowPaymentForm(false);
-    } catch (err) {
-      console.error("Erro ao adicionar pagamento:", err);
-      setError("Erro ao adicionar pagamento");
-    }
-  };
+      try {
+        const updatedTab = await tabService.addPaymentToTab(tab.id, {
+          payer_name: paymentData.payer_name || undefined,
+          payment_value: parseFloat(paymentData.payment_value),
+          payment_method: paymentData.payment_method,
+        });
+        setTab(updatedTab); // Atualiza o estado local em vez de recarregar
+        setShowPaymentForm(false);
+      } catch (err) {
+        console.error("Erro ao adicionar pagamento:", err);
+        setError("Erro ao adicionar pagamento");
+      }
+    },
+    [tab]
+  );
 
-  const formatPrice = (price: number): string => {
+  const formatPrice = useCallback((price: number): string => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(price);
-  };
+  }, []);
 
-  const formatDate = (dateString: string): string => {
+  const formatDate = useCallback((dateString: string): string => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
@@ -171,7 +177,33 @@ const TabDetail: React.FC = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
+  }, []);
+
+  // Carrega produtos disponíveis apenas quando o modal é aberto
+  const loadAvailableProducts = useCallback(async () => {
+    const now = Date.now();
+
+    // Verificar se o cache ainda é válido
+    if (availableProductsCache.length > 0 && now - availableProductsCacheTimestamp < PRODUCTS_CACHE_DURATION) {
+      setAvailableProducts(availableProductsCache);
+      return;
+    }
+
+    try {
+      const productsData = await productService.getProducts();
+      availableProductsCache = productsData;
+      availableProductsCacheTimestamp = now;
+      setAvailableProducts(productsData);
+    } catch (err) {
+      console.error("Erro ao carregar produtos:", err);
+    }
+  }, []);
+
+  // Abre o modal de produtos e carrega produtos disponíveis
+  const handleOpenProductsModal = useCallback(() => {
+    setShowProductsModal(true);
+    loadAvailableProducts(); // Carrega produtos disponíveis apenas quando necessário
+  }, [loadAvailableProducts]);
 
   if (showPaymentForm && tab) {
     return <PaymentForm remainingAmount={tab.remaining_amount} onClose={() => setShowPaymentForm(false)} onSubmit={handleAddPayment} />;
@@ -385,7 +417,7 @@ const TabDetail: React.FC = () => {
             </IonFabButton>
             <IonFabList side="top">
               {/* Novo produto */}
-              <IonFabButton color="success" onClick={() => setShowProductsModal(true)}>
+              <IonFabButton color="success" onClick={handleOpenProductsModal}>
                 <IonIcon icon={fastFoodSharp} />
               </IonFabButton>
 
@@ -417,7 +449,7 @@ const TabDetail: React.FC = () => {
           </IonHeader>
           <IonContent>
             <IonList>
-              {products.map((product) => (
+              {availableProducts.map((product) => (
                 <IonItem key={product.id} button onClick={() => handleAddProduct(product)}>
                   <IonLabel>
                     <h3>{product.name}</h3>
