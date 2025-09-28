@@ -277,7 +277,8 @@ const TabDetail: React.FC = () => {
                   backgroundColor: "var(--ion-color-light)",
                 }}
               >
-                {tab.total_items} {tab.total_items === 1 ? "item" : "itens"}
+                {tab.products && tab.products.length > 0 ? tab.products.length : "Nenhum"}{" "}
+                {tab.products && tab.products.length <= 1 ? "item" : "itens"}
               </div>
 
               <IonList style={{ margin: "16px" }}>
@@ -300,6 +301,9 @@ const TabDetail: React.FC = () => {
                             <IonLabel>{product.name}</IonLabel>
                             <IonLabel>{formatPrice(product.price)}</IonLabel>
                           </div>
+                          <IonLabel color="medium" style={{ fontSize: "0.8rem" }}>
+                            {product.quantity} {product.quantity === 1 ? "item" : "itens"}
+                          </IonLabel>
                         </IonLabel>
                       </IonItem>
                       {!tab.is_closed && (
@@ -319,47 +323,58 @@ const TabDetail: React.FC = () => {
               </IonList>
             </IonContent>
           </IonTab>
+
           <IonTab tab="payments">
-            {tab.payments && tab.payments.length > 0 ? (
-              <IonCard>
-                <IonCardHeader>
-                  <IonCardTitle>Pagamentos</IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  {tab.payments.map((payment) => (
-                    <div
-                      key={payment.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "8px 0",
-                        borderBottom: "1px solid var(--ion-color-light)",
-                      }}
-                    >
-                      <div>
-                        <IonText color="primary">
-                          <strong>{formatPrice(payment.payment_value)}</strong>
-                        </IonText>
-                        <div style={{ fontSize: "0.9rem", color: "var(--ion-color-medium)" }}>
-                          {payment.payment_method}
-                          {payment.payer_name && ` • ${payment.payer_name}`}
-                        </div>
-                      </div>
-                      <IonText color="medium" style={{ fontSize: "0.8rem" }}>
-                        {formatDate(payment.created_at)}
-                      </IonText>
-                    </div>
-                  ))}
-                </IonCardContent>
-              </IonCard>
-            ) : (
-              <div style={{ padding: "20px", textAlign: "center" }}>
-                <IonText color="medium">
-                  <p>Nenhum pagamento adicionado</p>
-                </IonText>
+            <IonContent>
+              <div
+                style={{
+                  padding: "4px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "var(--ion-color-light)",
+                }}
+              >
+                {tab.payments && tab.payments.length > 0 ? tab.payments.length : "Nenhum"}{" "}
+                {tab.payments && tab.payments.length <= 1 ? "pagamento" : "pagamentos"}
               </div>
-            )}
+
+              <IonList style={{ margin: "16px" }}>
+                {tab.payments && tab.payments.length > 0 ? (
+                  tab.payments.map((payment, index) => (
+                    <IonItem key={index} button={true} lines="none">
+                      <IonAvatar
+                        aria-hidden="true"
+                        slot="start"
+                        style={{ alignItems: "center", justifyContent: "center", backgroundColor: "var(--ion-color-primary)" }}
+                      >
+                        <img alt="" src="https://picsum.photos/256/256" />
+                      </IonAvatar>
+                      <IonLabel>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <IonLabel>{payment.payment_method}</IonLabel>
+                          <IonLabel>{formatPrice(payment.payment_value)}</IonLabel>
+                        </div>
+                        <IonLabel color="medium" style={{ fontSize: "0.8rem" }}>
+                          {formatDate(payment.created_at)}
+                        </IonLabel>
+                      </IonLabel>
+                    </IonItem>
+                  ))
+                ) : (
+                  <IonItem button={true} lines="none">
+                    Nenhum pagamento adicionado
+                  </IonItem>
+                )}
+              </IonList>
+            </IonContent>
           </IonTab>
         </IonTabs>
 
