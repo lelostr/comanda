@@ -167,8 +167,8 @@ const TabsPage: React.FC = () => {
         ) : (
           <IonGrid>
             <IonRow>
-              {tabs.map((tab) => (
-                <IonCol size="12" size-md="6" size-lg="4" key={tab.id}>
+              {tabs.map((tab, index) => (
+                <IonCol size="12" size-md="6" size-lg="4" key={index}>
                   <IonCard>
                     <div
                       style={{
